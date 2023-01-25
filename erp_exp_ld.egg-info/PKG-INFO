@@ -1,0 +1,13 @@
+Metadata-Version: 1.0
+Name: erp-exp-ld
+Version: 0.1.0
+Summary: A custom package to analyze EEG data
+Home-page: https://github.com/Lucja-Doradzinska/erp_exp_ld
+Author: Lucja Doradzinska
+Author-email: l.doradzinska@nencki.edu.pl
+License: LICENSE.txt
+Description: # erp_exp_ld
+        A custom package to analyze EEG and behavioral data from ERP experiments.
+        It is requires mne and autoreject packages. 
+        
+Platform: UNKNOWN

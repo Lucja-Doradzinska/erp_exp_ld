@@ -959,10 +959,10 @@ class Erp_waveform:
                 erp_contra = erp_contra1 - erp_contra2
                 lab_ipsi = _combine_labels(cond, 'ipsi')   
                 lab_contra = _combine_labels(cond, 'contra') 
-                diff_wave[lab_contra] = erp_contra.mean(axis = 1)
                 diff_wave[lab_ipsi] = erp_ipsi.mean(axis = 1)
-                ci[lab_contra] = stats.t.interval(0.95, len(self.subjects) - 1, 0, 1)[1] * erp_contra.std(axis = 1) / np.sqrt(len(self.subjects))
+                diff_wave[lab_contra] = erp_contra.mean(axis = 1)
                 ci[lab_ipsi] = stats.t.interval(0.95, len(self.subjects) - 1, 0, 1)[1] * erp_ipsi.std(axis = 1) / np.sqrt(len(self.subjects))
+                ci[lab_contra] = stats.t.interval(0.95, len(self.subjects) - 1, 0, 1)[1] * erp_contra.std(axis = 1) / np.sqrt(len(self.subjects))
         return diff_wave, ci     
     
     

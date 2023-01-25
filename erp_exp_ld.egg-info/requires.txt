@@ -1,0 +1,2 @@
+mne>=0.24.1
+autoreject>=0.2.2
