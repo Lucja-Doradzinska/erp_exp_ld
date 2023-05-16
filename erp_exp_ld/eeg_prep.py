@@ -414,7 +414,7 @@ def filter_raw(subjects, path, raw_prep_folder, filt_folder, set_filter = True, 
 
         
 def to_epochs(subjects, path, filt_folder, epochs_raw_folder, eeg_log_folder, stim_channel, stim_markers, 
-              resp_markers, quest_markers = [], reject_miss = True, reject_too_early = True, epoch_tmin = -0.2, 
+              resp_markers = [], quest_markers = [], reject_miss = True, reject_too_early = True, epoch_tmin = -0.2, 
               epoch_tmax = 1.2, epoch_baseline = (None, 0), resample = False, resample_freq = 256, save_xlsx = True, 
               save_csv = False):
     """Transform raw data to epochs rejecting invalid trials.
@@ -437,6 +437,7 @@ def to_epochs(subjects, path, filt_folder, epochs_raw_folder, eeg_log_folder, st
         Dictionary of events labels and ids.
     resp_markers :  list of int
         Ids of response events.
+        Defaults to [].
     quest_markers : list of int
         Ids of question events.    
         Defaults to [].

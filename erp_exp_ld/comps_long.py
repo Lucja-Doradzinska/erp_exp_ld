@@ -163,7 +163,7 @@ class Trials_data:
         for label in comp_labels_left:
             for factor in label['conds']:
                 log[factor] = []
-        log['side'] = []
+        log['side_'] = []
         log['erp_amp'] = []
         for subj in self.subjects:
             for indx in range(len(self.epochs[subj])):
@@ -173,24 +173,24 @@ class Trials_data:
                         log['subject'].append(subj)
                         for factor in label['conds']:
                             log[factor].append(label['conds'][factor])
-                        log['side'].append('ipsi')
+                        log['side_'].append('ipsi')
                         log['erp_amp'].append(epoch.get_data(picks = channels_left, tmin = time_window[0]/1000, tmax = time_window[1]/1000).mean() * 1e6)
                         log['subject'].append(subj)
                         for factor in label['conds']:
                             log[factor].append(label['conds'][factor])
-                        log['side'].append('contra')
+                        log['side_'].append('contra')
                         log['erp_amp'].append(epoch.get_data(picks = channels_right, tmin = time_window[0]/1000, tmax = time_window[1]/1000).mean() * 1e6)
                 for label in comp_labels_right:
                     if list(epoch.event_id.keys())[0] in label['labels']:
                         log['subject'].append(subj)
                         for factor in label['conds']:
                             log[factor].append(label['conds'][factor])
-                        log['side'].append('ipsi')
+                        log['side_'].append('ipsi')
                         log['erp_amp'].append(epoch.get_data(picks = channels_right, tmin = time_window[0]/1000, tmax = time_window[1]/1000).mean() * 1e6)
                         log['subject'].append(subj)
                         for factor in label['conds']:
                             log[factor].append(label['conds'][factor])
-                        log['side'].append('contra')
+                        log['side_'].append('contra')
                         log['erp_amp'].append(epoch.get_data(picks = channels_left, tmin = time_window[0]/1000, tmax = time_window[1]/1000).mean() * 1e6)
         _save_log(log, self.path + comp_long_folder, comp_name + '_amps_long_format', save_xlsx, save_csv)  
         if return_log:
