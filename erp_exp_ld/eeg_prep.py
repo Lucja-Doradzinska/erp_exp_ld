@@ -63,16 +63,6 @@ def _set_eog (raw, veog_channels, heog_channels):
 
                 
 
-def _check_markers(events, stim_markers, subj):
-    """Check if all datasets contain all markers."""
-    
-    for stim in stim_markers:
-        if stim_markers[stim] not in events[:,2]:
-            del stim_markers[stim]
-            print('There are no events ' + stim + ' in raw object ' + subj + '.')
-
-
-
 def _find_too_early (events, stim_markers, quest_markers):
     """Find events with too early response.
 
@@ -513,7 +503,6 @@ def to_epochs(subjects, path, filt_folder, epochs_raw_folder, eeg_log_folder, st
         raw = mne.io.read_raw_fif(path + filt_folder + subj + '_filt.fif', preload=True)  
         #getting events array
         events = mne.find_events(raw, stim_channel, shortest_event = 1)
-        _check_markers(events, stim_markers, subj)
         # rejecting too early trials
         if reject_too_early:
             del_t_e = _find_too_early(events, stim_markers, quest_markers)
@@ -526,7 +515,7 @@ def to_epochs(subjects, path, filt_folder, epochs_raw_folder, eeg_log_folder, st
             events = np.delete(events, del_m, 0)
         #epoching
         epochs = mne.Epochs(raw, events, stim_markers, epoch_tmin, epoch_tmax, baseline = epoch_baseline,
-                            preload = True, reject_by_annotation = False)
+                            preload = True, on_missing = 'warn', reject_by_annotation = False)
         #resampling
         if resample:
             epochs = epochs.resample(resample_freq)
