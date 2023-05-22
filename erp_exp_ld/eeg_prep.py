@@ -281,8 +281,8 @@ def _plot_psd_epoch(epochs, plot_name, save_psd_plots, path, psd_plot_folder, pl
 
 
 def raw_prep(subjects, path, raw_signal_folder, raw_prep_folder, stim_channel, montage = 'biosemi64',  
-             set_eog = False, veog_channels = None, heog_channels = None, exclude_channels = [], set_reref = True, 
-             reref_channels = 'average'):
+             set_eog = False, veog_channels = None, heog_channels = None, set_ecg = False, ecg_channel = None,
+             exclude_channels = [], set_reref = True, reref_channels = 'average'):
     """Set montage, eogs and rereference raw data.
 
     Parameters
@@ -309,10 +309,16 @@ def raw_prep(subjects, path, raw_signal_folder, raw_prep_folder, stim_channel, m
     heog_channels : str | list of str | None
         Names of heog channels.
         Defaults to None.
+    set_ecg : bool
+        Whether to set ecg channel.
+        Defaults to False., 
+    ecg_channel : str |  None
+        Name of ecg channel.
+        Defaults to None.
     exclude_channels : list of str
         Channels to exclude from dataset.
         Defaults to [].
-    set_eog : bool
+    set_reref : bool
         Whether to rereference data.
         Defaults to True.
     reref_channels : str | list of str
@@ -335,6 +341,10 @@ def raw_prep(subjects, path, raw_signal_folder, raw_prep_folder, stim_channel, m
         #setting bipolar eog channels
         if set_eog:
             raw = _set_eog(raw, veog_channels, heog_channels)
+        #setting ecg channel
+        if set_ecg:
+            raw = raw.rename_channels({ecg_channel:'ECG'})
+            raw = raw.set_channel_types({'ECG':'ecg'})   
         #rereferencing
         if set_reref:
             raw , _ = mne.set_eeg_reference(raw, reref_channels, copy = False)     
