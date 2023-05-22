@@ -422,10 +422,14 @@ def filter_raw(subjects, path, raw_prep_folder, filt_folder, set_filter = True, 
             raw_filt = raw_filt.filter(low_cutoff, high_cutoff, 'eeg', method = filt_method)
             if 'eog' in raw_filt:
                 raw_filt = raw_filt.filter(low_cutoff, high_cutoff, 'eog', method = filt_method)
+            if 'ecg' in raw_filt:
+                raw_filt = raw_filt.filter(low_cutoff, high_cutoff, 'ecg', method = filt_method)
         if set_notch:
             raw_filt = raw_filt.notch_filter(np.arange(50, 201, 50), 'eeg')
             if 'eog' in raw_filt:
                 raw_filt = raw_filt.notch_filter(np.arange(50, 201, 50), 'eog')
+            if 'ecg' in raw_filt:
+                raw_filt = raw_filt.notch_filter(np.arange(50, 201, 50), 'ecg')
         if plot_psd:   
             _plot_psd_raw([raw, raw_filt], subj, save_psd_plots, path, filt_folder + 'psd_plots\\', plot_save_format)
         #saving preprocessed eeg signal
