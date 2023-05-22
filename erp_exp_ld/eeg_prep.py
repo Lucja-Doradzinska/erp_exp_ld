@@ -177,7 +177,7 @@ def _find_eog_epochs (epochs, eog_chann, eog_window, eog_thresh):
 
 
 
-def _perf_ica(epochs, n_components, ica_method, eog_channels, ica_thresh):
+def _perf_ica(epochs, n_components, ica_method, eog_channels, ica_thresh, remove_ecg, ecg_channel):
     """Find eog artifacts using ICA.
 
     Parameters
@@ -192,6 +192,10 @@ def _perf_ica(epochs, n_components, ica_method, eog_channels, ica_thresh):
         A list of eog channels.
     ica_thresh : float
         Threshold on the z-score used in the iterative z-scoring method of finding bad components.
+    remove_ecg : bool
+        Whether to remove ecg signal.
+    ecg_channel : str
+        Ecg channel.
         
     Returns
     -------
@@ -212,6 +216,12 @@ def _perf_ica(epochs, n_components, ica_method, eog_channels, ica_thresh):
         rej_comps += len(eog_inds)
         #rejecting eogs
         ica.exclude.extend(eog_inds)
+    if remove_ecg:
+        #finding ecg components
+        ecg_inds, _ = ica.find_bads_ecg(epochs, ecg_channel)
+        rej_comps += len(ecg_inds)
+        #rejecting ecgs
+        ica.exclude.extend(ecg_inds)
     #applying ica
     epochs = ica.apply(epochs)
     #correcting baseline
@@ -526,8 +536,8 @@ def to_epochs(subjects, path, filt_folder, epochs_raw_folder, eeg_log_folder, st
 
 def remove_eogs(subjects, path, epochs_raw_folder, epochs_noeog_folder, eeg_log_folder, reject_veog = False, 
                 veog_thresh = 140e-6, veog_window = [-0.1, 0.1], reject_heog = False, heog_thresh = 80e-6, 
-                heog_window = [0, 0.5], perform_ica = False, ica_thresh = 3, n_components = 64, ica_method = 'fastica',
-                save_xlsx = True, save_csv = False):
+                heog_window = [0, 0.5], perform_ica = False, ica_thresh = 3, n_components = 64, remove_ecg = False, 
+                ica_method = 'fastica', save_xlsx = True, save_csv = False):
     """Remove epochs with eye movements and components with remaining EOG artifacts.
 
     Parameters
@@ -571,6 +581,9 @@ def remove_eogs(subjects, path, epochs_raw_folder, epochs_noeog_folder, eeg_log_
     n_components : int
         Number of principal components.
         Defaults to 64.
+    remove_ecg : bool
+        Whether to remove ecg signal with ICA.
+        Defaults is to False.
     ica_method : ‘fastica’ | ‘infomax’ | ‘picard’
         The ICA method to use in the fit method (see mne.preprocessing.ICA).
         Defaults to 'fastica'.
@@ -615,10 +628,12 @@ def remove_eogs(subjects, path, epochs_raw_folder, epochs_noeog_folder, eeg_log_
             epochs.drop(heog_rej)
         #cleaning data from eog artifacts with ICA
         if perform_ica:
-            epochs, rej_comps = _perf_ica(epochs, n_components, ica_method, ['VEOG', 'HEOG'], ica_thresh)
+            epochs, rej_comps = _perf_ica(epochs, n_components, ica_method, ['VEOG', 'HEOG'], ica_thresh, remove_ecg, 'ECG')
             log['rej_comps'].append(rej_comps)
         #dropping eog channels    
         epochs.drop_channels(['VEOG', 'HEOG']) 
+        if remove_ecg:
+            epochs.drop_channels(['ECG']) 
         #saving cleaned epochs
         epochs.save(path + epochs_noeog_folder + subj + '_epo.fif', overwrite=True)
     _save_log(log, path + eeg_log_folder, 'eog_artifacts_log', save_xlsx, save_csv)
